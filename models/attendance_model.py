@@ -11,6 +11,8 @@ class Attendance(Base):
     punch_in = Column(Time)
     punch_out = Column(Time)
 
+    worked_hours = Column(Time)
+
     punch_in_photo = Column(String, nullable=True)
     punch_out_photo = Column(String, nullable=True)
 
