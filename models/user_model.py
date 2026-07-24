@@ -8,5 +8,6 @@ class User(Base):
     empid = Column(Integer, ForeignKey("employees.empid"))
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
+    phone = Column(String)
     password = Column(String)
     is_active = Column(Boolean, default=True)

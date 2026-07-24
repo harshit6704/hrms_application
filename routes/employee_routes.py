@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
 from schemas.employee_schema import EmployeeCreateSchema, EmployeeResponseSchema
-from services.employee_services import create_employee as create_employee_service, get_employee_by_id
+from services.employee_services import create_employee as create_employee_service
 from services.employee_services import get_all_employees as get_all_employees_service
 from services.employee_services import get_employee_by_id as get_employee_by_id_service
 

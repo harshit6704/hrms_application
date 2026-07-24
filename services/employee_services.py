@@ -1,7 +1,13 @@
 from models.employee_model import Employee
-
+from fastapi import HTTPException
 
 def create_employee(employee,db):
+
+    existing_employee = db.query(Employee).filter(Employee.empnumber == employee.empnumber).first()
+    if existing_employee:
+        raise HTTPException(status_code=400, detail="Employee with this empnumber already exists.")
+
+    
     db_employee = Employee(
         empnumber=employee.empnumber,
         name=employee.name,

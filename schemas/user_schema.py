@@ -6,7 +6,7 @@ class UserBaseSchema(BaseModel):
     email: EmailStr
     password: str
     name: str
-    phone: int
+    phone: str
     empid: int
     is_active: bool
     
@@ -16,11 +16,15 @@ class UserCreateSchema(UserBaseSchema):
 class UserUpdateSchema(UserBaseSchema):
     pass
 
+class UserLoginSchema(BaseModel):
+    email: EmailStr
+    password: str
+    
 class UserResponseSchema(BaseModel):
     uid: int
+    empid: int
     email: EmailStr
     name: str
-    phone: int
-    empid: int
+    phone: str
 
     model_config = ConfigDict(from_attributes=True)
