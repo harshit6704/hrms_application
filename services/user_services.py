@@ -1,7 +1,7 @@
 from http.client import HTTPException
-
 from models.user_model import User
 from utils.security import hash_password, verify_password
+from utils.jwt_handler import create_access_token
 
 def create_user(user, db):
 
@@ -33,7 +33,13 @@ def login_user(email, password, db):
         raise HTTPException(status_code=404, detail="User not found.")
     if not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Incorrect password.")
-    return user
+    access_token = create_access_token(
+        data ={"sub": str(user.uid)}
+    )
+    return {
+        "access_token": access_token,
+        "token_type":"bearer"
+    }
 
 def get_all_users(db):
     return db.query(User).all()

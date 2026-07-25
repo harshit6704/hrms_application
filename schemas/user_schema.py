@@ -19,6 +19,10 @@ class UserUpdateSchema(UserBaseSchema):
 class UserLoginSchema(BaseModel):
     email: EmailStr
     password: str
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str
     
 class UserResponseSchema(BaseModel):
     uid: int
