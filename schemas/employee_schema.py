@@ -1,5 +1,5 @@
 
-from datetime import date, time
+from datetime import date
 from pydantic import BaseModel, EmailStr,ConfigDict
 
 class EmployeeBaseSchema(BaseModel):
@@ -15,10 +15,10 @@ class EmployeeBaseSchema(BaseModel):
 
 class EmployeeCreateSchema(EmployeeBaseSchema):
     empnumber: str
-    shifthours: time
+    shifthours: float
 
 class EmployeeUpdateSchema(EmployeeBaseSchema):
-    shifthours: time
+    shifthours: float
 
 class EmployeeResponseSchema(BaseModel):
     empnumber: str
@@ -28,6 +28,6 @@ class EmployeeResponseSchema(BaseModel):
     dob: date
     doj: date
     department: str
-    shifthours: time
+    shifthours: float
 
     model_config = ConfigDict(from_attributes=True)

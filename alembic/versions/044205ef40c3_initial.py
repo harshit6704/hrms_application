@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: bf48543b8185
+Revision ID: 044205ef40c3
 Revises: 
-Create Date: 2026-07-24 11:06:21.499775
+Create Date: 2026-07-29 19:40:50.453107
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'bf48543b8185'
+revision: str = '044205ef40c3'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,12 +26,12 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('empnumber', sa.String(), nullable=True),
     sa.Column('email', sa.String(), nullable=True),
-    sa.Column('phone', sa.Integer(), nullable=True),
+    sa.Column('phone', sa.String(), nullable=True),
     sa.Column('doj', sa.String(), nullable=True),
     sa.Column('dob', sa.String(), nullable=True),
     sa.Column('department', sa.String(), nullable=True),
     sa.Column('salary', sa.Integer(), nullable=True),
-    sa.Column('shifthours', sa.Time(), nullable=True),
+    sa.Column('shifthours', sa.Numeric(precision=4, scale=2), nullable=True),
     sa.PrimaryKeyConstraint('empid')
     )
     op.create_index(op.f('ix_employees_email'), 'employees', ['email'], unique=True)
@@ -51,11 +51,13 @@ def upgrade() -> None:
     sa.Column('date', sa.Date(), nullable=True),
     sa.Column('punch_in', sa.Time(), nullable=True),
     sa.Column('punch_out', sa.Time(), nullable=True),
-    sa.Column('worked_hours', sa.Time(), nullable=True),
+    sa.Column('hours_worked', sa.Interval(), nullable=True),
     sa.Column('punch_in_photo', sa.String(), nullable=True),
     sa.Column('punch_out_photo', sa.String(), nullable=True),
-    sa.Column('punch_in_location', sa.String(), nullable=True),
-    sa.Column('punch_out_location', sa.String(), nullable=True),
+    sa.Column('punch_in_latitude', sa.Float(), nullable=True),
+    sa.Column('punch_in_longitude', sa.Float(), nullable=True),
+    sa.Column('punch_out_latitude', sa.Float(), nullable=True),
+    sa.Column('punch_out_longitude', sa.Float(), nullable=True),
     sa.Column('status', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['empid'], ['employees.empid'], ),
     sa.PrimaryKeyConstraint('aid')
@@ -102,7 +104,9 @@ def upgrade() -> None:
     sa.Column('empid', sa.Integer(), nullable=True),
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('email', sa.String(), nullable=True),
+    sa.Column('phone', sa.String(), nullable=True),
     sa.Column('password', sa.String(), nullable=True),
+    sa.Column('role', sa.String(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['empid'], ['employees.empid'], ),
     sa.PrimaryKeyConstraint('uid')

@@ -9,6 +9,7 @@ class PayrollCreateSchema(BaseModel):
 class PayrollResponseSchema(BaseModel):
     pid: int
     empid: int
+    name :str
     month: int
     year: int
     paid_days: int

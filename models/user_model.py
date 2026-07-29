@@ -1,5 +1,6 @@
 from database import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from models.enums import UserRole
 
 class User(Base):
     __tablename__ = "users"
@@ -10,4 +11,5 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     phone = Column(String)
     password = Column(String)
+    role = Column(String, nullable=False,default=UserRole.EMPLOYEE)
     is_active = Column(Boolean, default=True)

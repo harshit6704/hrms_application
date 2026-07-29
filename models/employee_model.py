@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Time
+from sqlalchemy import Column, Integer, String, Numeric
 from database import Base
 
 class Employee(Base):
@@ -13,4 +13,4 @@ class Employee(Base):
     dob = Column(String)
     department = Column(String)
     salary = Column(Integer)
-    shifthours = Column(Time)
+    shifthours = Column(Numeric(4,2))

@@ -1,5 +1,6 @@
 
 from pydantic import BaseModel,ConfigDict, EmailStr
+from models.enums import UserRole
 
 
 class UserBaseSchema(BaseModel):
@@ -8,6 +9,7 @@ class UserBaseSchema(BaseModel):
     name: str
     phone: str
     empid: int
+    role: UserRole
     is_active: bool
     
 class UserCreateSchema(UserBaseSchema):

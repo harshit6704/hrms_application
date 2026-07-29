@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, Interval 
 from sqlalchemy import Date, Time
 
 class Attendance(Base):
@@ -11,11 +11,15 @@ class Attendance(Base):
     punch_in = Column(Time)
     punch_out = Column(Time)
 
-    worked_hours = Column(Time)
+    hours_worked = Column(Interval)
 
     punch_in_photo = Column(String, nullable=True)
     punch_out_photo = Column(String, nullable=True)
 
-    punch_in_location = Column(String, nullable=True)
-    punch_out_location = Column(String, nullable=True)
+    punch_in_latitude = Column(Float, nullable=True)
+    punch_in_longitude = Column(Float, nullable=True)
+
+    punch_out_latitude = Column(Float, nullable=True)
+    punch_out_longitude = Column(Float, nullable=True)
+    
     status = Column(String)

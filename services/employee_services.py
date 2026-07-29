@@ -15,6 +15,7 @@ def create_employee(employee,db):
         phone=employee.phone,
         dob=employee.dob,
         doj=employee.doj,
+        salary=employee.salary,
         department=employee.department,
         shifthours=employee.shifthours
     )

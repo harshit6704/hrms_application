@@ -22,6 +22,7 @@ class LeaveApplicationResponseSchema(BaseModel):
     laid: int
     lvid: str
     empid: str
+    name:str
     start_date: str
     end_date: str
     reason: str
