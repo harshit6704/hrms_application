@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from schemas.user_schema import UserCreateSchema, UserLoginSchema, UserResponseSchema,TokenSchema
 from database import get_db
-from services.user_services import create_user as create_user_service, get_all_users as get_all_users_service, login_user as login_user_service
+from services.user_services import create_user as create_user_service, get_all_users as get_all_users_service, login_user as login_user_service, get_user_by_id as get_user_by_id_service
 
 router=APIRouter(
     prefix="/users",
@@ -11,6 +11,10 @@ router=APIRouter(
 @router.get("/",response_model=list[UserResponseSchema])
 def get_all_users(db: Session = Depends(get_db)):
     return get_all_users_service(db)
+
+@router.get("/{uid}",response_model=UserResponseSchema)
+def get_user_by_id(uid:int,db:Session=Depends(get_db)):
+    return get_user_by_id_service(uid,db)
 
 @router.post("/",response_model=UserResponseSchema, status_code=201)
 def create_user(user:UserCreateSchema, db: Session = Depends(get_db)):

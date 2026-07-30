@@ -105,6 +105,8 @@ def get_attendance(
 ):
     if empid is None:
         empid = current_user.empid
+    elif current_user.role not in ["Admin", "HR"]:
+        raise HTTPException (status_code=403,detail="Not Authorized")
 
     employee = (
         db.query(Employee)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel,ConfigDict
-from datetime import date, time, timedelta
+from datetime import date, time
 
 class AttendancePunchInSchema(BaseModel):
     latitude: float

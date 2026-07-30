@@ -1,5 +1,6 @@
-from http.client import HTTPException
+from fastapi import HTTPException
 from models.user_model import User
+from models.employee_model import Employee
 from utils.security import hash_password, verify_password
 from utils.jwt_handler import create_access_token
 
@@ -12,6 +13,10 @@ def create_user(user, db):
     existing_empid = db.query(User).filter(User.empid == user.empid).first()
     if existing_empid:
         raise HTTPException(status_code=400, detail="User with this empid already exists.")
+
+    existing_emp = db.query(Employee).filter(Employee.empid == user.empid).first()
+    if not existing_emp:
+        raise HTTPException(status_code=404, detail="Employee not found with this empid.")
 
     db_user = User(
         email=user.email,
@@ -43,3 +48,6 @@ def login_user(email, password, db):
 
 def get_all_users(db):
     return db.query(User).all()
+
+def get_user_by_id(uid, db):
+    return db.query(User).filter(User.uid == uid).first()
