@@ -13,4 +13,5 @@ class Employee(Base):
     dob = Column(String)
     department = Column(String)
     salary = Column(Integer)
+    reporting_manager_empid=Column(Integer)
     shifthours = Column(Numeric(4,2))

@@ -1,6 +1,7 @@
 from database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy import Date
+from models.enums import LeaveStatus
 
 class LeaveApplication(Base):
     __tablename__ = "leave"
@@ -11,4 +12,5 @@ class LeaveApplication(Base):
     start_date = Column(Date)
     end_date = Column(Date)
     reason = Column(String)
-    status = Column(String)
+    status = Column(String(20), nullable=False, default=LeaveStatus.PENDING.value)
+    remarks = Column(String, nullable=True)

@@ -12,7 +12,6 @@ class EmployeeBaseSchema(BaseModel):
     salary: int
     is_active: bool
 
-
 class EmployeeCreateSchema(EmployeeBaseSchema):
     empnumber: str
     shifthours: float

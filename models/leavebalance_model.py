@@ -8,6 +8,7 @@ class LeaveBalance(Base):
     lvid = Column(Integer, ForeignKey("leave_types.lvid"))
     empid = Column(Integer, ForeignKey("employees.empid"))
     opening_bal= Column(Integer,default=0)
-    accured_bal=Column(Integer,default=0)
+    accured_bal = Column(Integer,default=0)
     used_bal = Column(Integer,default=0)
+    reserved_bal = Column(Integer,default=0)
     

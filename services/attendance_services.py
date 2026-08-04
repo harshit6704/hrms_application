@@ -1,8 +1,9 @@
 from models.attendance_model import Attendance
 from datetime import date, datetime,timedelta
 from fastapi import HTTPException
-from models.enums import AttendanceStatus
+from models.enums import AttendanceStatus,LeaveStatus
 from models.employee_model import Employee
+from models.leaveapplication_model import LeaveApplication
 
 
 def punch_in(punch,db,current_user):
@@ -105,7 +106,7 @@ def get_attendance(
 ):
     if empid is None:
         empid = current_user.empid
-    elif current_user.role not in ["Admin", "HR"]:
+    elif current_user.role not in {"Admin", "HR", "Manager"}:
         raise HTTPException (status_code=403,detail="Not Authorized")
 
     employee = (
@@ -124,7 +125,7 @@ def get_attendance(
     if to_date is None:
         to_date = date.today()
 
-    records = (
+    attendance_records = (
         db.query(Attendance)
         .filter(
             Attendance.empid == empid,
@@ -136,14 +137,25 @@ def get_attendance(
 
     attendance_map = {
         attendance.date: attendance
-        for attendance in records
+        for attendance in attendance_records
     }
+
+    approved_leaves = (
+        db.query(LeaveApplication)
+        .filter(
+            LeaveApplication.empid == empid,
+            LeaveApplication.status == LeaveStatus.APPROVED.value,
+            LeaveApplication.start_date <= to_date,
+            LeaveApplication.end_date >= from_date
+        )
+        .all()
+    )
+
     result = []
 
     current = from_date
 
     while current <= to_date:
-
         if current in attendance_map:
 
             attendance = attendance_map[current]
@@ -158,7 +170,9 @@ def get_attendance(
                 "punch_in": attendance.punch_in,
                 "punch_out": attendance.punch_out,
 
-                "hours_worked": format_hours_worked(attendance.hours_worked),
+                "hours_worked": format_hours_worked(
+                    attendance.hours_worked
+                ),
 
                 "punch_in_latitude": attendance.punch_in_latitude,
                 "punch_in_longitude": attendance.punch_in_longitude,
@@ -168,8 +182,24 @@ def get_attendance(
 
                 "status": attendance.status
             })
-
         else:
+
+            leave_found = any(
+                leave.start_date <= current <= leave.end_date
+                for leave in approved_leaves
+            )
+
+            if leave_found:
+
+                status = AttendanceStatus.LEAVE.value
+
+            elif current > date.today():
+
+                status = AttendanceStatus.NOT_MARKED.value
+
+            else:
+
+                status = AttendanceStatus.ABSENT.value
 
             result.append({
 
@@ -189,7 +219,7 @@ def get_attendance(
                 "punch_out_latitude": None,
                 "punch_out_longitude": None,
 
-                "status": AttendanceStatus.ABSENT.value
+                "status": status
             })
 
         current += timedelta(days=1)

@@ -1,11 +1,12 @@
-
+from datetime import date
 from pydantic import BaseModel,ConfigDict
 
 
 class LeaveApplicationBaseSchema(BaseModel):
-    lvid: str
-    start_date: str
-    end_date: str
+    empid: int | None = None
+    lvid: int
+    start_date: date
+    end_date: date
     reason: str
 
 class LeaveApplicationCreateSchema(LeaveApplicationBaseSchema):
@@ -19,14 +20,13 @@ class LeaveApplicationApprovalSchema(BaseModel):
     remarks: str
 
 class LeaveApplicationResponseSchema(BaseModel):
-    laid: int
-    lvid: str
-    empid: str
+    lvid: int
+    empid: int
     name:str
-    start_date: str
-    end_date: str
+    start_date: date
+    end_date: date
     reason: str
     status: str
-    remarks: str
+    remarks: str | None = None
 
     model_config = ConfigDict(from_attributes=True)

@@ -12,5 +12,12 @@ class AttendanceStatus(str, Enum):
     ABSENT = "Absent"
     HALF_DAY = "Half Day"
     LEAVE = "Leave"
+    NOT_MARKED = "Not Marked"
     HOLIDAY = "Holiday"
     WEEK_OFF = "Week Off"
+
+class LeaveStatus(str, Enum):
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    CANCELLED = "Cancelled"

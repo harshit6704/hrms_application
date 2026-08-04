@@ -1,7 +1,8 @@
-from typing import Optional
+from utils.jwt_handler import get_current_user
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
+from models.user_model import User
 from schemas.leavebalance_schema import LeaveBalanceAddSchema,LeaveBalanceResponseSchema,LeaveBalanceBaseSchema
 from services.leavebalance_service import add_leavebalance as add_leavebalance_service, get_leavebalance as get_leavebalance_service
 
@@ -9,9 +10,10 @@ router=APIRouter(
     prefix="/leavebalance",
 )
 @router.get("/",response_model=list[LeaveBalanceResponseSchema])
-def get_leavebalance(empid: Optional[int] = None,
-                    lvid: Optional[int] = None,db:Session=Depends(get_db)):
-    return get_leavebalance_service(empid,lvid,db)
+def get_leavebalance(empid: int | None = None,
+                    lvid: int | None = None,db:Session=Depends(get_db),
+                    current_user: User = Depends(get_current_user)):
+    return get_leavebalance_service(empid,lvid,db,current_user)
 
 @router.post("/")
 def add_leavebalance(leavebalance:LeaveBalanceAddSchema, db:Session=Depends(get_db)):
