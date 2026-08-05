@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, Float
 
 class Payroll(Base):
     __tablename__ = "payroll"
@@ -9,4 +9,5 @@ class Payroll(Base):
     month = Column(Integer)
     year = Column(Integer)
     paid_days = Column(Integer)
-    net_pay = Column(Integer)
+    gross_salary=Column(Integer)
+    net_pay = Column(Float)

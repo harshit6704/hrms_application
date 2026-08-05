@@ -23,7 +23,7 @@ router=APIRouter(prefix="/leaveapplication")
 
 
 @router.post("/",response_model=LeaveApplicationResponseSchema)
-def create_leave(leave:LeaveApplicationCreateSchema,db:Session = Depends(get_db),current_user: User = Depends(get_current_user),):
+def create_leave(leave:LeaveApplicationCreateSchema,db:Session = Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_leave_service(leave,db,current_user)
 
 @router.put("/{laid}", response_model=LeaveApplicationResponseSchema)
