@@ -8,10 +8,14 @@ class LeaveBalanceAddSchema(LeaveBalanceBaseSchema):
     opening_bal:int
     pass
 
+class LeaveBalanceUpdateSchema(BaseModel):
+    opening_bal:int
 
 class LeaveBalanceResponseSchema(BaseModel):
+    lbid:int
     lvid:int
     empid:int
+    name: str
     opening_bal:int
     accured_bal:int
     used_bal:int

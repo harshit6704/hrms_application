@@ -11,5 +11,5 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     phone = Column(String)
     password = Column(String)
-    role = Column(String, nullable=False,default=UserRole.EMPLOYEE)
+    role = Column(String, nullable=False,default=UserRole.EMPLOYEE.value)
     is_active = Column(Boolean, default=True)

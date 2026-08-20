@@ -24,7 +24,8 @@ def create_user(user, db):
         name=user.name,
         phone=user.phone,
         empid=user.empid,
-        is_active=user.is_active
+        is_active=user.is_active,
+        role=user.role.value
 
     )
     db.add(db_user)
@@ -49,5 +50,29 @@ def login_user(email, password, db):
 def get_all_users(db):
     return db.query(User).all()
 
-def get_user_by_id(uid, db):
-    return db.query(User).filter(User.uid == uid).first()
+def get_user_by_id(uid, db, current_user):
+    if current_user.role in {"Admin", "HR"}:
+        user = (db.query(User)
+            .filter(User.uid == uid)
+            .first())
+
+    else:
+        if uid!= current_user.uid:
+            raise HTTPException(
+                status_code=403,
+                detail="Not authorized."
+            )
+
+        user = (
+            db.query(User)
+            .filter(User.uid == current_user.uid)
+            .first()
+        )
+
+    if user is None:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found."
+        )
+
+    return user

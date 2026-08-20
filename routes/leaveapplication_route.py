@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database import get_db
-from utils.jwt_handler import get_current_user
+from utils.jwt_handler import get_current_user, require_roles
 from models.user_model import User
 from datetime import date
 
@@ -45,7 +45,7 @@ def approve_leave(
     laid: int,
     approval: LeaveApplicationApprovalSchema,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles("Admin", "HR", "Manager")),
 ):
     return approve_leave_service(
         laid=laid,

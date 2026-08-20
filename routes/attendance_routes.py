@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from models.user_model import User
-from schemas.attendance_schema import AttendancePunchInSchema, AttendancePunchOutSchema,AttendanceResponseSchema
+from schemas.attendance_schema import AttendancePunchInSchema, AttendancePunchOutSchema,AttendanceResponseSchema,PunchInResponseSchema,PunchOutResponseSchema
 from sqlalchemy.orm import Session
 from utils.jwt_handler import get_current_user
 from database import get_db
@@ -11,12 +11,12 @@ router=APIRouter(
     prefix="/attendance",
     )
 
-@router.post("/punch-in")
+@router.post("/punch-in",response_model=PunchInResponseSchema)
 def punch_in(punch:AttendancePunchInSchema, db : Session = Depends(get_db),
             current_user: User = Depends(get_current_user)):
     return punch_in_service(punch,db,current_user)
 
-@router.post("/punch-out")
+@router.post("/punch-out",response_model=PunchOutResponseSchema)
 def punch_out(punch:AttendancePunchOutSchema, db : Session = Depends(get_db),
             current_user: User = Depends(get_current_user)):
     return punch_out_service(punch,db,current_user)

@@ -1,0 +1,54 @@
+// This file mirrors the FastAPI backend's actual routers exactly.
+// If a backend route changes, this is the only file that should need editing.
+//
+// Verified against:
+//   routes/user_routes.py            -> prefix "/users"
+//   routes/employee_routes.py        -> prefix "/employees"
+//   routes/attendance_routes.py      -> prefix "/attendance"
+//   routes/leave_routes.py           -> prefix "/leave"           (leave TYPES, not applications)
+//   routes/leaveapplication_route.py -> prefix "/leaveapplication"
+//   routes/leavebalance_route.py     -> prefix "/leavebalance"
+//   routes/payroll_routes.py         -> prefix "/payroll"
+
+export const endpoints = {
+  users: {
+    login: "/users/login", // POST { email, password } -> { access_token, token_type }
+    list: "/users/", // GET -> UserResponseSchema[]
+    create: "/users/", // POST UserCreateSchema -> UserResponseSchema
+    byId: (uid) => `/users/${uid}`, // GET -> UserResponseSchema
+  },
+  employees: {
+    list: "/employees/", // GET -> EmployeeResponseSchema[]
+    create: "/employees/", // POST EmployeeCreateSchema -> raw Employee (no response_model)
+    byId: (empid) => `/employees/${empid}`, // GET -> EmployeeResponseSchema
+    update: (empid) => `/employees/${empid}`,
+    // NOTE: there is no update route in the backend today (see BACKEND GAPS).
+  },
+  attendance: {
+    punchIn: "/attendance/punch-in", // POST { latitude, longitude } -> raw Attendance (no response_model)
+    punchOut: "/attendance/punch-out", // POST { latitude, longitude } -> raw Attendance (no response_model)
+    list: "/attendance/", // GET ?empid&from_date&to_date -> AttendanceResponseSchema[]
+  },
+  leaveTypes: {
+    // These are LEAVE TYPES (e.g. "Sick Leave"), from routes/leave_routes.py -> prefix "/leave"
+    list: "/leave/", // GET -> LeaveTypeResponseSchema[]
+    byId: (lvid) => `/leave/${lvid}`, // GET -> LeaveTypeResponseSchema
+    create: "/leave/", // POST LeaveTypeCreateSchema -> LeaveTypeResponseSchema
+  },
+  leaveApplications: {
+    list: "/leaveapplication/", // GET ?empid&lvid&status&from_date&to_date -> LeaveApplicationResponseSchema[]
+    byId: (laid) => `/leaveapplication/${laid}`, // GET -> LeaveApplicationResponseSchema
+    create: "/leaveapplication/", // POST LeaveApplicationCreateSchema -> LeaveApplicationResponseSchema
+    update: (laid) => `/leaveapplication/${laid}`, // PUT LeaveApplicationUpdateSchema -> LeaveApplicationResponseSchema
+    approval: (laid) => `/leaveapplication/${laid}/approval`, // PUT LeaveApplicationApprovalSchema -> LeaveApplicationResponseSchema
+  },
+  leaveBalance: {
+    list: "/leavebalance/", // GET ?empid&lvid -> LeaveBalanceResponseSchema[]
+    add: "/leavebalance/",
+    update: (lbid) => `/leavebalance/${lbid}`, // POST LeaveBalanceAddSchema -> raw LeaveBalance (no response_model)
+  },
+  payroll: {
+    generate: "/payroll/generate", // POST PayrollCreateSchema -> custom summary dict
+    list: "/payroll/", // GET ?empid&month&year -> PayrollResponseSchema[]
+  },
+};

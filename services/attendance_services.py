@@ -26,7 +26,7 @@ def punch_in(punch,db,current_user):
     db.add(db_attendance)
     db.commit()
     db.refresh(db_attendance)
-    return db_attendance
+    return {"punch_in": db_attendance.punch_in.strftime("%H:%M:%S")}
     
 
 def punch_out(punch,db,current_user):
@@ -63,7 +63,7 @@ def punch_out(punch,db,current_user):
     )
     db.commit()
     db.refresh(attendance)
-    return attendance
+    return {"punch_out":attendance.punch_out.strftime("%H:%M:%S")}
 
 
 def calculate_hours_worked(punch_in, punch_out):
@@ -106,8 +106,37 @@ def get_attendance(
 ):
     if empid is None:
         empid = current_user.empid
-    elif current_user.role not in {"Admin", "HR", "Manager"}:
-        raise HTTPException (status_code=403,detail="Not Authorized")
+
+    elif current_user.role in {"Admin", "HR"}:
+    # Admin / HR can view anyone
+        pass
+
+    elif current_user.role == "Manager":
+
+        employee = (
+            db.query(Employee)
+            .filter(Employee.empid == empid)
+            .first()
+        )
+
+        if employee is None:
+            raise HTTPException(
+            status_code=404,
+            detail="Employee not found."
+        )
+
+        if employee.reporting_manager_empid != current_user.empid:
+            raise HTTPException(
+            status_code=403,
+            detail="You can only view attendance of your reporting employees."
+        )
+
+    else:
+        # Employee cannot request another employee's attendance
+        raise HTTPException(
+            status_code=403,
+            detail="You can only view your own attendance."
+        )
 
     employee = (
         db.query(Employee)
@@ -167,8 +196,16 @@ def get_attendance(
 
                 "date": attendance.date,
 
-                "punch_in": attendance.punch_in,
-                "punch_out": attendance.punch_out,
+                "punch_in":  (
+                    attendance.punch_in.strftime("%H:%M:%S")
+                    if attendance.punch_in
+                    else None
+                    ),
+                "punch_out": (
+                    attendance.punch_out.strftime("%H:%M:%S")
+                    if attendance.punch_out
+                    else None
+                    ),
 
                 "hours_worked": format_hours_worked(
                     attendance.hours_worked

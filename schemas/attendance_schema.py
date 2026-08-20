@@ -9,6 +9,12 @@ class AttendancePunchOutSchema(BaseModel):
     latitude: float
     longitude: float    
 
+class PunchInResponseSchema(BaseModel):
+    punch_in: time | None
+
+class PunchOutResponseSchema(BaseModel):
+    punch_out: time | None
+
 class AttendanceResponseSchema(BaseModel):
     empid:int
     name: str

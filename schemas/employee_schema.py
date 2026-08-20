@@ -20,6 +20,7 @@ class EmployeeUpdateSchema(EmployeeBaseSchema):
     shifthours: float
 
 class EmployeeResponseSchema(BaseModel):
+    empid: int
     empnumber: str
     name: str
     email: EmailStr
@@ -27,6 +28,7 @@ class EmployeeResponseSchema(BaseModel):
     dob: date
     doj: date
     department: str
+    salary:int
     shifthours: float
 
     model_config = ConfigDict(from_attributes=True)
