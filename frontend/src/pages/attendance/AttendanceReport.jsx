@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAttendance } from "../../services/attendanceService.js";
 import { getErrorMessage } from "../../lib/api.js";
+import { downloadCsv } from "../../lib/downloadCsv.js";
+import { useToast } from "../../components/Toast.jsx";
 import PageHeader from "../../components/PageHeader.jsx";
 import Loading from "../../components/Loading.jsx";
 import ErrorState from "../../components/ErrorState.jsx";
@@ -22,6 +24,7 @@ export default function AttendanceReport() {
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
+  const { showToast } = useToast();
 
   async function load() {
     setStatus("loading");
@@ -44,9 +47,39 @@ export default function AttendanceReport() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleDownload() {
+    if (rows.length === 0) {
+      showToast(
+        "There are no attendance records to download.",
+        "error"
+      );
+      return;
+    }
+
+    downloadCsv("attendance-report.csv", rows, [
+      { label: "Date", value: (r) => r.date },
+      { label: "Employee ID", value: (r) => r.empid },
+      { label: "Employee Name", value: (r) => r.name },
+      { label: "Punch In", value: (r) => r.punch_in },
+      { label: "Punch Out", value: (r) => r.punch_out },
+      { label: "Hours Worked", value: (r) => r.hours_worked },
+      { label: "Status", value: (r) => r.status },
+    ]);
+  }
+
   return (
     <div>
-      <PageHeader title="Attendance Report"/>
+      <PageHeader title="Attendance Report"
+      actions={
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="text-sm px-4 py-2 rounded-md border border-paper-line"
+          >
+            Download CSV
+          </button>
+        }
+      />
 
       <form
         onSubmit={(e) => {

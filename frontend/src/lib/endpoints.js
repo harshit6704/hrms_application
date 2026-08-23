@@ -1,15 +1,3 @@
-// This file mirrors the FastAPI backend's actual routers exactly.
-// If a backend route changes, this is the only file that should need editing.
-//
-// Verified against:
-//   routes/user_routes.py            -> prefix "/users"
-//   routes/employee_routes.py        -> prefix "/employees"
-//   routes/attendance_routes.py      -> prefix "/attendance"
-//   routes/leave_routes.py           -> prefix "/leave"           (leave TYPES, not applications)
-//   routes/leaveapplication_route.py -> prefix "/leaveapplication"
-//   routes/leavebalance_route.py     -> prefix "/leavebalance"
-//   routes/payroll_routes.py         -> prefix "/payroll"
-
 export const endpoints = {
   users: {
     login: "/users/login", // POST { email, password } -> { access_token, token_type }
@@ -22,7 +10,7 @@ export const endpoints = {
     create: "/employees/", // POST EmployeeCreateSchema -> raw Employee (no response_model)
     byId: (empid) => `/employees/${empid}`, // GET -> EmployeeResponseSchema
     update: (empid) => `/employees/${empid}`,
-    // NOTE: there is no update route in the backend today (see BACKEND GAPS).
+    uploadCsv: "/employees/upload-csv",
   },
   attendance: {
     punchIn: "/attendance/punch-in", // POST { latitude, longitude } -> raw Attendance (no response_model)

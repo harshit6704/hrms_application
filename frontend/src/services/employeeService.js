@@ -27,3 +27,14 @@ export async function updateEmployee(empid, payload) {
   return res.data;
 }
 
+export async function uploadEmployeesCsv(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await api.post(
+    endpoints.employees.uploadCsv,
+    formData
+  );
+
+  return res.data;
+}

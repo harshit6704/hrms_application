@@ -33,10 +33,10 @@ export function ToastProvider({ children }) {
             className={
               "ledger-card px-4 py-3 shadow-md border-l-4 font-body text-sm animate-[fadeIn_.15s_ease-out] " +
               (t.variant === "error"
-                ? "border-l-[var(--color-absent)] text-[var(--color-absent)]"
+                ? "border-l-(--color-absent) text-(--color-absent)"
                 : t.variant === "info"
-                ? "border-l-[var(--color-leave)] text-[var(--color-ink)]"
-                : "border-l-[var(--color-present)] text-[var(--color-ink)]")
+                ? "border-l-leave text-ink"
+                : "border-l-(--color-present) text-ink")
             }
           >
             {t.message}

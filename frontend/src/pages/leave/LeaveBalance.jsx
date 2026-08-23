@@ -9,6 +9,8 @@ import {
 import { getAllLeaveTypes } from "../../services/leaveTypeService.js";
 
 import { getErrorMessage } from "../../lib/api.js";
+import { downloadCsv } from "../../lib/downloadCsv.js";
+import { useToast } from "../../components/Toast.jsx";
 
 import PageHeader from "../../components/PageHeader.jsx";
 import Loading from "../../components/Loading.jsx";
@@ -17,6 +19,8 @@ import EmptyState from "../../components/EmptyState.jsx";
 
 
 export default function LeaveBalance() {
+
+  const toast = useToast();
 
   const [empid, setEmpid] = useState("");
   const [lvid, setLvid] = useState("");
@@ -92,6 +96,26 @@ export default function LeaveBalance() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
+  function handleDownload() {
+    if (balances.length === 0) {
+      toast.error("There are no leave balances to download.");
+      return;
+    }
+
+    downloadCsv("leave-balance.csv", balances, [
+      { label: "Leave Balance ID", value: (b) => b.lbid },
+      { label: "Employee ID", value: (b) => b.empid },
+      { label: "Employee Name", value: (b) => b.name },
+      { label: "Leave Type", value: (b) => leaveTypes[b.lvid] || b.lvid },
+      { label: "Opening Balance", value: (b) => b.opening_bal },
+      { label: "Accrued", value: (b) => b.accured_bal },
+      { label: "Reserved", value: (b) => b.reserved_bal },
+      { label: "Used", value: (b) => b.used_bal },
+      { label: "Available", value: (b) => b.leave_balance },
+    ]);
+  }
 
 
   function openAddForm() {
@@ -192,13 +216,22 @@ export default function LeaveBalance() {
         title="Leave Balance"
         subtitle="Available leave by type"
         actions={
-          <button
-            type="button"
-            onClick={openAddForm}
-            className="bg-ink text-paper text-sm px-4 py-2 rounded-md"
-          >
-            Add Leave Balance
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="text-sm px-4 py-2 rounded-md border border-paper-line"
+            >
+              Download CSV
+            </button>
+            <button
+              type="button"
+              onClick={openAddForm}
+              className="bg-ink text-paper text-sm px-4 py-2 rounded-md"
+            >
+              Add Leave Balance
+            </button>
+          </>
         }
       />
 

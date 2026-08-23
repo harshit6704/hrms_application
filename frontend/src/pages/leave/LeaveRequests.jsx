@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getLeaveApplications, approveLeave } from "../../services/leaveApplicationService.js";
 import { getErrorMessage } from "../../lib/api.js";
+import { downloadCsv } from "../../lib/downloadCsv.js";
 import { useToast } from "../../components/Toast.jsx";
 import PageHeader from "../../components/PageHeader.jsx";
 import Loading from "../../components/Loading.jsx";
@@ -38,6 +39,26 @@ export default function LeaveRequests() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter]);
 
+  function handleDownload() {
+    if (applications.length === 0) {
+      toast.error("There are no leave applications to download.");
+      return;
+    }
+
+    downloadCsv("leave-applications.csv", applications, [
+      { label: "Application ID", value: (a) => a.laid },
+      { label: "Employee ID", value: (a) => a.empid },
+      { label: "Employee Name", value: (a) => a.name },
+      { label: "Leave Type ID", value: (a) => a.lvid },
+      { label: "Start Date", value: (a) => a.start_date },
+      { label: "End Date", value: (a) => a.end_date },
+      { label: "Reason", value: (a) => a.reason },
+      { label: "Status", value: (a) => a.status },
+      { label: "Remarks", value: (a) => a.remarks },
+    ]);
+  }
+
+
   function openReview(app, decision) {
     setReviewing({ app, decision });
     setRemarks("");
@@ -64,6 +85,15 @@ export default function LeaveRequests() {
       <PageHeader
         title="Leave Approvals"
         subtitle="Approve or reject leave requests. Only Admin, HR, or a reporting Manager can act — enforced by the backend."
+        actions={
+          <button
+            type="button"
+            onClick={handleDownload}
+            className="text-sm px-4 py-2 rounded-md border border-paper-line"
+          >
+            Download CSV
+          </button>
+        }
       />
 
       <div className="ledger-card p-3 mb-4 flex items-center gap-3">

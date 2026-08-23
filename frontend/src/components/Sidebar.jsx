@@ -30,7 +30,7 @@ const links = [
   },
   {
     to: "/leave",
-    label: "My Leave",
+    label: "Leave Application",
     roles: [
       ROLES.ADMIN,
       ROLES.HR,

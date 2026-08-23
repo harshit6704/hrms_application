@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPayroll, generatePayroll } from "../../services/payrollService.js";
 import { getErrorMessage } from "../../lib/api.js";
+import { downloadCsv } from "../../lib/downloadCsv.js";
 import { useToast } from "../../components/Toast.jsx";
 import PageHeader from "../../components/PageHeader.jsx";
 import Loading from "../../components/Loading.jsx";
@@ -51,6 +52,24 @@ export default function Payroll() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleDownload() {
+    if (rows.length === 0) {
+      toast.error("There are no payroll records to download.");
+      return;
+    }
+
+    downloadCsv("payroll.csv", rows, [
+      { label: "Employee ID", value: (r) => r.empid },
+      { label: "Employee Name", value: (r) => r.name },
+      { label: "Month", value: (r) => r.month },
+      { label: "Year", value: (r) => r.year },
+      { label: "Gross Salary", value: (r) => r.gross_salary },
+      { label: "Paid Days", value: (r) => r.paid_days },
+      { label: "Net Pay", value: (r) => r.net_pay },
+    ]);
+  }
+
+
   async function handleGenerate(e) {
     e.preventDefault();
     setGenError("");
@@ -85,11 +104,20 @@ export default function Payroll() {
       <PageHeader
         title="Payroll"
         actions={
-          <RoleGuard roles={[ROLES.ADMIN, ROLES.HR]}>
-          <button onClick={() => setShowGenerate(true)} className="bg-ink text-paper text-sm px-4 py-2 rounded-md">
-            Generate payroll
-          </button>
-          </RoleGuard>
+          <>
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="text-sm px-4 py-2 rounded-md border border-paper-line"
+            >
+              Download CSV
+            </button>
+            <RoleGuard roles={[ROLES.ADMIN, ROLES.HR]}>
+              <button onClick={() => setShowGenerate(true)} className="bg-ink text-paper text-sm px-4 py-2 rounded-md">
+                Generate payroll
+              </button>
+            </RoleGuard>
+          </>
         }
       />
 
