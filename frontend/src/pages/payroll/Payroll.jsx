@@ -10,6 +10,9 @@ import EmptyState from "../../components/EmptyState.jsx";
 import Modal from "../../components/Modal.jsx";
 import RoleGuard from "../../components/RoleGuard.jsx";
 import { ROLES } from "../../utils/roles.js";
+import EmployeeSelect from "../../components/EmployeeSelect.jsx";
+import EmployeeMultiSelect from "../../components/EmployeeMultiSelect.jsx";
+import { getAllEmployees } from "../../services/employeeService.js";
 
 const now = new Date();
 
@@ -25,21 +28,28 @@ export default function Payroll() {
   const [showGenerate, setShowGenerate] = useState(false);
   const [genMonth, setGenMonth] = useState(now.getMonth() + 1);
   const [genYear, setGenYear] = useState(now.getFullYear());
-  const [genEmpids, setGenEmpids] = useState("");
+  const [selectedEmpids, setSelectedEmpids] = useState([]);
   const [selectAll, setSelectAll] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [genError, setGenError] = useState("");
   const [genResult, setGenResult] = useState(null);
+  const [employees, setEmployees] = useState([]);
 
   async function load() {
     setStatus("loading");
+
     try {
-      const data = await getPayroll({
-        empid: empid || undefined,
-        month: month || undefined,
-        year: year || undefined,
-      });
-      setRows(data);
+      const [payrollData, employeeData] = await Promise.all([
+        getPayroll({
+          empid: empid || undefined,
+          month: month || undefined,
+          year: year || undefined,
+        }),
+        getAllEmployees(),
+      ]);
+
+      setRows(payrollData);
+      setEmployees(employeeData);
       setStatus("ready");
     } catch (err) {
       setError(getErrorMessage(err));
@@ -80,13 +90,7 @@ export default function Payroll() {
         month: Number(genMonth),
         year: Number(genYear),
         select_all: selectAll,
-        empid: selectAll
-          ? []
-          : genEmpids
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-              .map(Number),
+        empid: selectAll ? [] : selectedEmpids,
       };
       const result = await generatePayroll(payload);
       setGenResult(result);
@@ -113,7 +117,13 @@ export default function Payroll() {
               Download CSV
             </button>
             <RoleGuard roles={[ROLES.ADMIN, ROLES.HR]}>
-              <button onClick={() => setShowGenerate(true)} className="bg-ink text-paper text-sm px-4 py-2 rounded-md">
+              <button onClick={() => {
+                setSelectedEmpids([]);
+                setSelectAll(true);
+                setGenError("");
+                setGenResult(null);
+                setShowGenerate(true);
+              }} className="bg-ink text-paper text-sm px-4 py-2 rounded-md">
                 Generate payroll
               </button>
             </RoleGuard>
@@ -130,9 +140,14 @@ export default function Payroll() {
       >
         <div>
           <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">
-            Employee ID <span className="normal-case font-sans">(optional)</span>
+            Employee
           </label>
-          <input type="number" value={empid} onChange={(e) => setEmpid(e.target.value)} className="ledger-input px-3 py-2 text-sm w-40" />
+
+          <EmployeeSelect
+            value={empid}
+            onChange={setEmpid}
+            placeholder="Search employee number or name..."
+          />
         </div>
         <div>
           <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">Month</label>
@@ -199,10 +214,12 @@ export default function Payroll() {
           </label>
           {!selectAll && (
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">
-                Employee IDs (comma-separated)
-              </label>
-              <input value={genEmpids} onChange={(e) => setGenEmpids(e.target.value)} placeholder="e.g. 1, 4, 7" className="ledger-input w-full px-3 py-2 text-sm" />
+              <EmployeeMultiSelect
+                employees={employees}
+                value={selectedEmpids}
+                onChange={setSelectedEmpids}
+                placeholder="Search or paste employee numbers..."
+              />
             </div>
           )}
           <div className="flex gap-2 justify-end">

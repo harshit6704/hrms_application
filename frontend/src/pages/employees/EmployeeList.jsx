@@ -1,6 +1,6 @@
-import { useEffect, useMemo,useRef,useState } from "react";
-import { Link , useNavigate } from "react-router-dom";
-import { getAllEmployees,uploadEmployeesCsv, } from "../../services/employeeService.js";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllEmployees, uploadEmployeesCsv, } from "../../services/employeeService.js";
 import { getErrorMessage } from "../../lib/api.js";
 import { downloadCsv } from "../../lib/downloadCsv.js";
 import { useToast } from "../../components/Toast.jsx";
@@ -9,6 +9,7 @@ import Loading from "../../components/Loading.jsx";
 import ErrorState from "../../components/ErrorState.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
 import { downloadEmployeeTemplate } from "../../lib/employeeCsvTemplate.js";
+import EmployeeSelect from "../../components/EmployeeSelect.jsx";
 
 export default function EmployeeList() {
   const navigate = useNavigate();
@@ -23,7 +24,8 @@ export default function EmployeeList() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
- 
+  const [employeeFilter, setEmployeeFilter] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState("");
 
   async function load() {
     setStatus("loading");
@@ -42,16 +44,18 @@ export default function EmployeeList() {
   }, []);
 
   const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return employees;
-    return employees.filter(
-      (e) =>
-        e.name?.toLowerCase().includes(q) ||
-        e.email?.toLowerCase().includes(q) ||
-        e.empnumber?.toLowerCase().includes(q) ||
-        e.department?.toLowerCase().includes(q)
-    );
-  }, [employees, search]);
+    return employees.filter((e) => {
+      const matchesEmployee =
+        !employeeFilter ||
+        String(e.empid) === String(employeeFilter);
+
+      const matchesDepartment =
+        !departmentFilter ||
+        e.department === departmentFilter;
+
+      return matchesEmployee && matchesDepartment;
+    });
+  }, [employees, employeeFilter, departmentFilter]);
 
   function handleDownload() {
     if (filtered.length === 0) {
@@ -123,11 +127,11 @@ export default function EmployeeList() {
         actions={
           <>
             <button
-            type="button"
-            onClick={downloadEmployeeTemplate}
-            className="text-sm px-4 py-2 rounded-md border border-paper-line"
+              type="button"
+              onClick={downloadEmployeeTemplate}
+              className="text-sm px-4 py-2 rounded-md border border-paper-line"
             >
-            Download Blank CSV
+              Download Blank CSV
             </button>
 
             <button
@@ -135,7 +139,7 @@ export default function EmployeeList() {
               onClick={openUpload}
               className="text-sm px-4 py-2 rounded-md border border-paper-line"
             >
-            Upload CSV
+              Upload CSV
             </button>
 
             <button
@@ -145,7 +149,7 @@ export default function EmployeeList() {
             >
               Download Employee's List
             </button>
-            
+
             <button
               type="button"
               onClick={() => navigate("/employees/create")}
@@ -157,12 +161,10 @@ export default function EmployeeList() {
         }
       />
 
-      <input
-        type="text"
-        placeholder="Search by name, email, employee no. or department…"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="ledger-input w-full px-3 py-2 text-sm mb-4"
+      <EmployeeSelect
+        value={employeeFilter}
+        onChange={setEmployeeFilter}
+        placeholder="Search employee number or name..."
       />
 
       {status === "loading" && <Loading label="Loading employees…" />}

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAttendance } from "../../services/attendanceService.js";
+import { getAllEmployees } from "../../services/employeeService.js";
+import EmployeeSelect from "../../components/EmployeeSelect.jsx"
 import { getErrorMessage } from "../../lib/api.js";
 import { downloadCsv } from "../../lib/downloadCsv.js";
 import { useToast } from "../../components/Toast.jsx";
@@ -21,6 +23,7 @@ export default function AttendanceReport() {
   const [fromDate, setFromDate] = useState(firstOfMonth());
   const [toDate, setToDate] = useState(today());
   const [empid, setEmpid] = useState("");
+  const [employees, setEmployees] = useState([]);
   const [rows, setRows] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
@@ -41,9 +44,19 @@ export default function AttendanceReport() {
       setStatus("error");
     }
   }
+  async function loadEmployees() {
+  try {
+    const data = await getAllEmployees();
+    setEmployees(data);
+  } catch (err) {
+    setError(getErrorMessage(err));
+    setStatus("error");
+  }
+}
 
   useEffect(() => {
-    load();
+      loadEmployees();
+      load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,7 +83,7 @@ export default function AttendanceReport() {
   return (
     <div>
       <PageHeader title="Attendance Report"
-      actions={
+        actions={
           <button
             type="button"
             onClick={handleDownload}
@@ -96,16 +109,16 @@ export default function AttendanceReport() {
           <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">To date</label>
           <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="ledger-input px-3 py-2 text-sm" />
         </div>
-        <div>
+        <div className="w-64">
           <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">
-            Employee ID <span className="normal-case font-sans">(leave blank for yourself)</span>
+            Employee
           </label>
-          <input
-            type="number"
+
+          <EmployeeSelect
+            employees={employees}
             value={empid}
-            onChange={(e) => setEmpid(e.target.value)}
-            placeholder="e.g. 4"
-            className="ledger-input px-3 py-2 text-sm w-40"
+            onChange={(selectedEmpid) => setEmpid(selectedEmpid)}
+            placeholder="Search employee..."
           />
         </div>
         <button type="submit" className="bg-ink text-paper text-sm px-4 py-2 rounded-md">

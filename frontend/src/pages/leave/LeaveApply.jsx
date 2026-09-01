@@ -9,7 +9,7 @@ import ErrorState from "../../components/ErrorState.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
 import StatusBadge from "../../components/StatusBadge.jsx";
 import Modal from "../../components/Modal.jsx";
-import { getAllEmployees } from "../../services/employeeService.js";
+import EmployeeSelect from "../../components/EmployeeSelect.jsx"
 
 const emptyForm = { empid: "", lvid: "", start_date: "", end_date: "", reason: "" };
 
@@ -19,7 +19,6 @@ export default function LeaveApply() {
   const [applications, setApplications] = useState([]);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
-  const [employees, setEmployees] = useState([]);
 
   const [form, setForm] = useState(emptyForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,10 +30,9 @@ export default function LeaveApply() {
   async function loadAll() {
     setStatus("loading");
     try {
-      const [types, apps, employeeData] = await Promise.all([getAllLeaveTypes(), getLeaveApplications(), getAllEmployees()]);
+      const [types, apps, employeeData] = await Promise.all([getAllLeaveTypes(), getLeaveApplications()]);
       setLeaveTypes(types);
       setApplications(apps);
-      setEmployees(employeeData);
       setStatus("ready");
 
     } catch (err) {
@@ -189,25 +187,12 @@ export default function LeaveApply() {
               Employee
             </label>
 
-            <select
-              required
+            <EmployeeSelect
               value={form.empid}
-              onChange={(e) => update("empid", e.target.value)}
-              className="ledger-input w-full px-3 py-2 text-sm"
-            >
-              <option value="">
-                Select employee
-              </option>
-
-              {employees.map((employee) => (
-                <option
-                  key={employee.empid}
-                  value={employee.empid}
-                >
-                  {employee.name} #{employee.empid}
-                </option>
-              ))}
-            </select>
+              onChange={(empid) => update("empid", empid)}
+              placeholder="Search employee number or name..."
+              required
+            />
           </div>
 
           {/* Leave Type */}

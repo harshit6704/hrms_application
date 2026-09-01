@@ -8,9 +8,10 @@ from services.employee_services import (
     get_employee_by_id as get_employee_by_id_service,
     update_employee as update_employee_service,
     upload_employees_csv as upload_employees_csv_service,
+    get_selectable_employees as get_selectable_employees_service
 )
 
-from utils.jwt_handler import require_roles
+from utils.jwt_handler import require_roles, get_current_user
 from models.user_model import User
 
 router = APIRouter(
@@ -39,6 +40,13 @@ def upload_employees_csv(
         )
 
     return upload_employees_csv_service(file, db)
+
+@router.get("/selectable", response_model=list[EmployeeResponseSchema])
+def get_selectable_employees(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return get_selectable_employees_service(db, current_user)
     
 @router.get("/{empid}", response_model=EmployeeResponseSchema)
 def get_employee_by_id(empid: int,

@@ -7,15 +7,17 @@ class UserBaseSchema(BaseModel):
     name: str
     phone: str
     empid: int
+    empnumber: str
     role: UserRole
     is_active: bool
     
 class UserCreateSchema(BaseModel):
-    email: EmailStr
     password: str
+    empid: int
+    empnumber: str
+    email: EmailStr
     name: str
     phone: str
-    empid: int
     is_active: bool = True
     role: UserRole = UserRole.EMPLOYEE
 
@@ -23,7 +25,7 @@ class UserUpdateSchema(UserBaseSchema):
     pass
 
 class UserLoginSchema(BaseModel):
-    email: EmailStr
+    identifier: str
     password: str
 
 class TokenSchema(BaseModel):
@@ -33,6 +35,7 @@ class TokenSchema(BaseModel):
 class UserResponseSchema(BaseModel):
     uid: int
     empid: int
+    empnumber: str
     email: EmailStr
     name: str
     phone: str

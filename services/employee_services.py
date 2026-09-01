@@ -236,3 +236,43 @@ def upload_employees_csv(file: UploadFile, db):
         "message": "Employees imported successfully.",
         "created_count": len(employees_to_create),
     }
+
+def get_selectable_employees(db, current_user):
+
+    # HR / Admin → all employees
+    if current_user.role in {"Admin", "HR"}:
+        return (
+            db.query(Employee)
+            .order_by(Employee.empid)
+            .all()
+        )
+
+    # Manager → himself + reporting employees
+    if current_user.role == "Manager":
+        return (
+            db.query(Employee)
+            .filter(
+                (Employee.empid == current_user.empid)
+                | (
+                    Employee.reporting_manager_empid
+                    == current_user.empid
+                )
+            )
+            .order_by(Employee.empid)
+            .all()
+        )
+
+    # Employee → only himself
+    if current_user.role == "Employee":
+        return (
+            db.query(Employee)
+            .filter(
+                Employee.empid == current_user.empid
+            )
+            .all()
+        )
+
+    raise HTTPException(
+        status_code=403,
+        detail="Not authorized."
+    )

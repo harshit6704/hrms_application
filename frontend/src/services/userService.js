@@ -1,8 +1,8 @@
 import { api } from "../lib/api.js";
 import { endpoints } from "../lib/endpoints.js";
 
-export async function login(email, password) {
-  const res = await api.post(endpoints.users.login, { email, password });
+export async function login(identifier, password) {
+  const res = await api.post(endpoints.users.login, { identifier, password });
   return res.data; // { access_token, token_type }
 }
 

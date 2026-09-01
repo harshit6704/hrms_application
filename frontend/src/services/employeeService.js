@@ -38,3 +38,8 @@ export async function uploadEmployeesCsv(file) {
 
   return res.data;
 }
+
+export async function getSelectableEmployees() {
+  const res = await api.get(endpoints.employees.selectable);
+  return res.data;
+}

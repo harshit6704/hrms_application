@@ -7,6 +7,7 @@ export const endpoints = {
   },
   employees: {
     list: "/employees/", // GET -> EmployeeResponseSchema[]
+    selectable: "/employees/selectable",
     create: "/employees/", // POST EmployeeCreateSchema -> raw Employee (no response_model)
     byId: (empid) => `/employees/${empid}`, // GET -> EmployeeResponseSchema
     update: (empid) => `/employees/${empid}`,

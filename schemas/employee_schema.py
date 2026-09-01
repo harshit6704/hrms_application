@@ -10,7 +10,7 @@ class EmployeeBaseSchema(BaseModel):
     doj: date
     department: str
     salary: int
-    is_active: bool
+    
 
 class EmployeeCreateSchema(EmployeeBaseSchema):
     empnumber: str

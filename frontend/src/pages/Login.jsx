@@ -8,7 +8,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,7 +22,7 @@ export default function Login() {
     setError("");
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login(identifier, password);
       navigate(location.state?.from?.pathname || "/", { replace: true });
     } catch (err) {
       setError(getErrorMessage(err));
@@ -50,16 +50,16 @@ export default function Login() {
 
           <div>
             <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">
-              Email
+              Email / Employee Number / Phone
             </label>
             <input
-              type="email"
+              type="text"
               required
               autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               className="ledger-input w-full px-3 py-2 text-sm"
-              placeholder="you@company.com"
+              placeholder="Email, employee number or phone"
             />
           </div>
 

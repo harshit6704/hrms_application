@@ -20,6 +20,7 @@ class LeaveApplicationApprovalSchema(BaseModel):
     remarks: str
 
 class LeaveApplicationResponseSchema(BaseModel):
+    laid: int
     lvid: int
     empid: int
     name:str

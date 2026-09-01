@@ -35,10 +35,6 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      // GET /users/{uid} -> UserResponseSchema: uid, empid, email, name, phone
-      // NOTE (BACKEND GAP): this response does not include `role`, so
-      // user.role is always null today. See utils/roles.js for how the UI
-      // handles that until the backend adds it.
       const profile = await getUserById(uid);
       setUser(profile);
     } catch {
@@ -56,8 +52,8 @@ export function AuthProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const login = useCallback(async (email, password) => {
-    const data = await loginRequest(email, password); // { access_token, token_type }
+  const login = useCallback(async (identifier, password) => {
+    const data = await loginRequest(identifier, password); // { access_token, token_type }
     localStorage.setItem(TOKEN_KEY, data.access_token);
     setToken(data.access_token);
     await loadUser(data.access_token);

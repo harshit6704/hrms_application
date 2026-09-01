@@ -9,6 +9,7 @@ import ErrorState from "../../components/ErrorState.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
 import StatusBadge from "../../components/StatusBadge.jsx";
 import Modal from "../../components/Modal.jsx";
+import EmployeeSelect from "../../components/EmployeeSelect.jsx";
 
 export default function LeaveRequests() {
   const toast = useToast();
@@ -16,7 +17,7 @@ export default function LeaveRequests() {
   const [statusFilter, setStatusFilter] = useState("Pending");
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState("");
-
+  const [empid, setEmpid] = useState("");
   const [reviewing, setReviewing] = useState(null); // { app, decision }
   const [remarks, setRemarks] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +26,7 @@ export default function LeaveRequests() {
   async function load() {
     setStatus("loading");
     try {
-      const data = await getLeaveApplications({ status: statusFilter || undefined });
+      const data = await getLeaveApplications({ empid: empid || undefined, status: statusFilter || undefined });
       setApplications(data);
       setStatus("ready");
     } catch (err) {
@@ -105,6 +106,18 @@ export default function LeaveRequests() {
           <option value="Cancelled">Cancelled</option>
           <option value="">All</option>
         </select>
+
+        
+        <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) ">
+          Employee
+        </label>
+
+        <EmployeeSelect
+          value={empid}
+          onChange={setEmpid}
+          placeholder="Search employee number or name..."
+        />
+    
       </div>
 
       {status === "loading" && <Loading label="Loading requests…" />}

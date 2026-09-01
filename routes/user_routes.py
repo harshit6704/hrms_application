@@ -30,4 +30,4 @@ def create_user(user: UserCreateSchema,
 
 @router.post("/login", response_model=TokenSchema)
 def login_user(user: UserLoginSchema, db: Session = Depends(get_db)):
-    return login_user_service(user.email, user.password, db)
+    return login_user_service(user.identifier, user.password, db)

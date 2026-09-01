@@ -16,6 +16,7 @@ import PageHeader from "../../components/PageHeader.jsx";
 import Loading from "../../components/Loading.jsx";
 import ErrorState from "../../components/ErrorState.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
+import EmployeeSelect from "../../components/EmployeeSelect.jsx";
 
 
 export default function LeaveBalance() {
@@ -247,22 +248,17 @@ export default function LeaveBalance() {
 
         <div className="flex flex-col sm:flex-row sm:items-end gap-3">
 
-          {/* EMPLOYEE ID */}
+          {/* EMPLOYEE */}
 
           <div>
             <label className="block text-xs font-mono uppercase tracking-wide text-(--color-ink-faint) mb-1">
-              Employee ID
+              Employee
             </label>
 
-            <input
-              type="number"
-              min="1"
+            <EmployeeSelect
               value={empid}
-              onChange={(e) =>
-                setEmpid(e.target.value)
-              }
-              placeholder="All employees"
-              className="ledger-input px-3 py-2 text-sm w-full sm:w-48"
+              onChange={setEmpid}
+              placeholder="Search employee number or name..."
             />
           </div>
 
@@ -313,26 +309,6 @@ export default function LeaveBalance() {
           >
             Search
           </button>
-
-
-          {/* CLEAR */}
-
-          {(empid || lvid) && (
-            <button
-              type="button"
-              onClick={() => {
-                setEmpid("");
-                setLvid("");
-
-                setTimeout(() => {
-                  load();
-                }, 0);
-              }}
-              className="text-sm px-4 py-2 rounded-md border border-paper-line"
-            >
-              Clear
-            </button>
-          )}
 
         </div>
 
